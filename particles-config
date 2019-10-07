@@ -1,0 +1,41 @@
+var x = p.position[0];
+var y = p.position[1];
+
+var fx = clamp(Math.round(x), 0, canvas.width - 1);
+var fy = clamp(Math.round(y), 0, canvas.height - 1);
+var heightIndex = fx + (fy * canvas.width);
+var heightValue = heightMap[heightIndex * 4] / 255;
+
+var pS = lerp(noiseScalar[0], noiseScalar[1], heightValue);
+var n = simplex.noise3D(fx * pS, fy * pS, p.duration + time);
+
+// var n = simplex.noise3D(fx * pS, fy * pS, p.duration + time);
+
+var angle = n * Math.PI * 2;
+var speed = p.speed + lerp(0.0, 2, 1 - heightValue);
+vec2.add(p.velocity, p.velocity, [ Math.cos(angle), Math.sin(angle) ]);
+
+// vec2.normalize(p.velocity, p.velocity);
+
+var move = vec2.scale([], p.velocity, speed);
+vec2.add(p.position, p.position, move);
+
+var s2 = pointilism;
+var r = p.radius * simplex.noise3D(x * s2, y * s2, p.duration + time);
+var r = p.radius * simplex.noise3D(x * s2, y * s2, p.duration + time);
+r *= lerp(0.01, 1.0, heightValue);
+ctx.beginPath();
+ctx.lineTo(x, y);
+ctx.lineTo(p.position[0], p.position[1]);
+ctx.lineWidth = r * (p.time / p.duration);
+
+// ctx.lineWidth = r * (p.time / p.duration);
+
+ctx.lineCap = opt.lineStyle || 'square';
+ctx.lineJoin = opt.lineStyle || 'square';
+ctx.strokeStyle = p.color;
+
+// ctx.strokeStyle = colorStyle(rgb.map(x => x * 255));
+
+ctx.globalAlpha = globalAlpha;
+ctx.stroke();
