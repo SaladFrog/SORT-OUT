@@ -1,15 +1,21 @@
-var loop = require('raf-loop');
+var createLoop = require('raf-loop')
+var loop = createLoop()
 var test = require('tape').test
-var engine = loop();
-test("loops expected number of times", function(t) {
-    t.plan(3)
-    var count = 0
 
-    // var engine = loop(function(dt) {
-    engine.on('tick', (dt) => {
+test("can attach tick events", function(t) {
+    t.plan(6)
+    var count = 0
+    console.log('Background')
+    
+    loop.on('tick', (dt) => {
         t.equal(typeof dt, 'number', 'iteration')
         count++
-        if (count>=3)
-          engine.stop()
-    }).start()
+        console.log('random variable', Math.random(1, 5))
+        
+        if (count>=5) {
+            loop.stop()
+            console.log('STOP')
+        }
+    });
+    loop.start()
 })
