@@ -4,14 +4,15 @@ var test = require('tape').test
 
 test("can attach tick events", function(t) {
     t.plan(6)
+    var bg = 'red'
     var count = 0
-    console.log('Background')
+    console.log('Background:', bg)
     
     loop.on('tick', (dt) => {
         t.equal(typeof dt, 'number', 'iteration')
         count++
-        console.log('random variable', Math.random(1, 5))
-        
+        console.log('random variable:', Math.random(1, 5))
+
         if (count>=5) {
             loop.stop()
             console.log('STOP')
