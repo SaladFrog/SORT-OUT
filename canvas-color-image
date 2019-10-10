@@ -1,0 +1,25 @@
+<canvas id=c></canvas>
+
+<script>
+var img = new Image; 
+img.onload = draw;
+img.src = "//i.stack.imgur.com/cZ0gC.png";
+
+var ctx = c.getContext("2d");
+
+function draw() {
+  // draw image
+  ctx.drawImage(this, 50, 10);
+  
+ // set composite mode
+  ctx.globalCompositeOperation = "source-in";
+  // draw color
+  ctx.fillStyle = "yellow";
+  ctx.fillRect(0, 20, c.width, c.height);
+  
+  // fill background in canvas itself
+  ctx.globalCompositeOperation = "destination-over";
+  ctx.fillStyle = "blue";
+  ctx.fillRect(0, 0, c.width, c.height);
+}
+</script>
