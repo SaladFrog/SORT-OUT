@@ -1,0 +1,39 @@
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let cw = (canvas.width = 300),
+    cx = cw / 2;
+let ch = (canvas.height = 300),
+    cy = ch / 2;
+
+//////////////////
+let r = 7; // change this!
+/////////////////
+
+function getCordinatesOnHeartShape(x, y) {
+  var cordinates = [];
+  var pi = Math.PI;
+  for (var t = 0; t <= 360; t++) {
+    var tr = t * pi / 180;
+    cordinates[t] = {
+      x: x - 16 * r * Math.sin(tr) * Math.sin(tr) * Math.sin(tr),
+      y:
+      y -
+      (13 * r * Math.cos(tr) -
+       5 * r * Math.cos(2 * tr) -
+       2 * r * Math.cos(3 * tr) -
+       r * Math.cos(4 * tr))
+    };
+  }
+  return cordinates;
+}
+
+ctx.beginPath();
+var hc = getCordinatesOnHeartShape(cx, cy-15);
+for (var i = 0; i < hc.length; i++) {
+  ctx.lineTo(hc[i].x, hc[i].y);
+}
+ctx.fill();
+</script>
