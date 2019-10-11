@@ -1,0 +1,79 @@
+  ////////////////////////
+  //  view-[pageName].js
+  ////////////////////////
+  
+  fn: async function(res) {
+
+    var stripe = require("stripe")(sails.config.custom.stripeSecret);
+    var stripePublicKey = sails.config.custom.stripePublishableKey;
+
+    var sessions = await stripe.checkout.sessions.create({
+      billing_address_collection: 'required',
+      payment_method_types: ['card'],
+      line_items: [{
+        name: '50x50cm - (Generative artwork)',
+        description: '123456789',
+        // images: ['bild'],
+        amount: 4000,
+        currency: 'sek',
+        quantity: 1
+      }],
+      success_url: 'https://localhost:1337/success',
+      cancel_url: 'https://localhost:1337/cancel',
+    });
+    sails.log(sessions);
+
+    var charges = await stripe.charges.list({
+        limit: 3
+      },
+      // function(err, charges) {
+      //   // asynchronously called
+      // }
+    );
+    sails.log(charges.data);
+
+    // Respond with view.
+    return {
+      sessions: sessions,
+      charges: charges.data,
+      stripePublicKey: stripePublicKey
+    };
+
+  }
+  
+  ////////////////////////
+  //  [pageName].page.js
+  ////////////////////////
+  
+  clickcheckout: function() {
+      var stripe = Stripe(this.stripePublicKey);
+
+      var sessionId = this.sessions.id;
+      var checkoutButton = document.getElementById('checkout-button');
+      
+      stripe.redirectToCheckout({
+          // Make the id field from the Checkout Session creation API response
+          // available to this file, so you can provide it as parameter here
+          // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+          sessionId: sessionId,
+        })
+        .then(function(result) {
+          if (result.error) {
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer.
+            var displayError = document.getElementById('error-message');
+            displayError.textContent = result.error.message;
+          }
+        });
+      // });
+    },
+    
+    ////////////////////////
+    //  [pageName].ejs
+    ////////////////////////
+    
+    <button class="btn btn-danger" id="checkout-button" role="link" @click="clickcheckout()">
+      Checkout
+    </button>
+    <div id="error-message"></div>
+  
