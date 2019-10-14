@@ -1,3 +1,7 @@
+// routes
+'GET /products': { action: 'view-products' },
+'GET /products/:id': { action: 'view-product' },
+    
 // page-products
 <% _.forEach(products.data, function(product) { %>
   <h3><%= product.name %></h3>
