@@ -13,8 +13,6 @@ return {
 };
 
 // page-product
-
-
 <h1><%= product.name %></h1>
 
 // view-product
