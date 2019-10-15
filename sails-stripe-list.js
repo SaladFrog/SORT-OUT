@@ -1,52 +1,54 @@
-// routes
-'GET /products': { action: 'view-products' },
-'GET /products/:id': { action: 'view-product' },
-    
-// page-products
-<% _.forEach(products.data, function(product) { %>
-  <h3><%= product.name %></h3>
-  <a class="btn btn-info" href="/products/<%= product.id %>"><%= product.name %></a>
-<% }) %>
-
 // view-products
-var products = await stripe.products.list(
-  {limit: 3},
-);
+var stripe = require('stripe')('key');
+var stripeProduct = await stripe.products.retrieve(
+    'productId',
+    );
+
+var stripeSku = await stripe.skus.list({
+product: stripeProduct.id
+});
+
 return {
-  products: products
+stripeProduct, 
+sku: stripeSku.data
 };
 
-// page-product
-<h1><%= product.name %></h1>
+// products
+<div class="container my-5">
+    <div class="row">
+      <div class="col-md-6">
+        <img src="https://picsum.photos/500" alt="print to sell">
+      </div>
 
-// view-product
-inputs: {
-  id: {
-    description: 'The ID of the product to look up.',
-    type: 'string'
-  }
+      <div class="col-md-5 offset-md-1">
+        <h1><%= stripeProduct.name %></h1>
+        <p><strong>Välj storlek</strong></p>
+        <% _.each(sku, function(sku){ %>
+        <button class="btn btn-outline-dark mb-5"><%= sku.attributes.name %></button>
+        <% }) %>
+
+        <br>
+
+        <form action="">
+          <div class="form-group">
+            <% _.each(sku, function(sku){ %>
+            <input type="button" class="btn btn-outline-danger mb-5" value="<%= sku.attributes.name %>"
+              v-model="checked">
+            <% }) %>
+          </div>
+          <p><strong>Description</strong><br>
+            <%= stripeProduct.metadata.description %></p>
+          <button class="btn btn-block btn-danger">Checkout</button>
+        </form>
+        {{ checked }}
+
+      </div>
+    </div>
+  </div>
+
+  <hr><!-- divider -->
+          
+// products.page
+data: {
+    checked: []
 },
-success: {
-  responseType: 'view',
-  viewTemplatePath: 'pages/product'
-},
-notFound: {
-  description: 'No product with the specified ID was found in the database.',
-  responseType: 'notFound'
-}
-  
-fn: async function ({ id }) {
-  var productId = {id}
-  sails.log(productId.id);
-
-  var product = await stripe.products.retrieve(
-    productId.id
-  );
-
-  if (!product) { throw 'notFound'; }
-
-  sails.log(product);
-  return {
-    product: product
-  };
-}
