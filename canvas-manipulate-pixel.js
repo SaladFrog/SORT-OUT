@@ -2,6 +2,7 @@
  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 // TODO: make as CSS background-size: cover;
+// https://github.com/bmcmahen/canvas-image-cover
 var hRatio = canvas.width / backgroundImage.width;
 var vRatio = canvas.height / backgroundImage.height;
 var ratio = Math.min(hRatio, vRatio);
